@@ -15,6 +15,15 @@ button {
   font-family: inherit;
 }
 
+h1 {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  text-shadow: 1px 2px 1px black;
+}
+
 .board {
   width: 100vw;
   height: 100vh;
