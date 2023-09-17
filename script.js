@@ -18,7 +18,36 @@ const restartButton = document.querySelector('.restartButton')
 const winText = document.querySelector('.win__message')
 let circleTurn;
 
-startGame()
+function saveGame() {
+  const gameState = {
+    circleTurn: circleTurn,
+    cellStates: [],
+  };
+
+  cellElements.forEach((cell) => {
+    gameState.cellStates.push(cell.classList.value);
+  });
+
+  localStorage.setItem("ticTacToeGame", JSON.stringify(gameState));
+}
+
+function loadGame() {
+    const savedGame = localStorage.getItem("ticTacToeGame");
+    if (savedGame) {
+        const gameState = JSON.parse(savedGame);
+        circleTurn = gameState.circleTurn;
+        cellElements.forEach((cell, index) => {
+          cell.className = gameState.cellStates[index];
+      });
+      if (!isDraw()) {
+          setBoardHoverClass();
+      }
+    } 
+      
+}
+
+startGame();
+loadGame();
 
 restartButton.addEventListener('click', startGame)
 
@@ -37,20 +66,22 @@ function startGame() {
 
 //Обработка клика по клетке
 function handleClick(e) {
-  const cell = e.target
-  //Определяем какой класс нужно добавить клетке в зависимости от очереди
-  const currentClass = circleTurn ? "circle" : "x"
-  placeMark(cell, currentClass)
-  //Проверяем стадию игры, в случае победы или ничьи завершаем, иначе меняем очередь
-  if (checkWin(currentClass)) {
-    endGame(false)
-  } else if (isDraw()) {
-    endGame(true)
-  } else {
-    swapTurns()
-    setBoardHoverClass()
-  }
+    const cell = e.target;
+     //Определяем какой класс нужно добавить клетке в зависимости от очереди
+    const currentClass = circleTurn ? "circle" : "x";
+    placeMark(cell, currentClass);
+    //Проверяем стадию игры, в случае победы или ничьи завершаем, иначе меняем очередь
+    if (checkWin(currentClass)) {
+      endGame(false);
+    } else if (isDraw()) {
+        endGame(true);
+    } else {
+        swapTurns();
+        setBoardHoverClass();
+        saveGame(); // Сохранение текущего состояние игры
+    }
 }
+
 
 //Обрабатываем вывод в конце игры для ничьи и победы какого либо из игроков
 function endGame(draw) {
